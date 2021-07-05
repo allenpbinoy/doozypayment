@@ -1,5 +1,4 @@
 import env from 'dotenv';
-// Replace if using a different env file or config.
 env.config({ path: './.env' });
 
 import bodyParser from 'body-parser';
