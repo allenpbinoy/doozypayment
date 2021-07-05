@@ -1,9 +1,9 @@
-
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/camelcase */
+
 import Stripe from 'stripe';
 import bodyParser from 'body-parser';
 import express from 'express';
@@ -348,7 +348,7 @@ app.post(
       event = stripe.webhooks.constructEvent(
         req.body,
         req.headers['stripe-signature'] || [],
-        stripeWebhookSecret
+        stripeWebhookSecret || ""
       );
     } catch (err) {
       console.log(`⚠️  Webhook signature verification failed.`);
