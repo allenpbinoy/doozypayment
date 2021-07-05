@@ -19,19 +19,19 @@ const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 const app = express();
 
-app.use(
-  (
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
-  ): void => {
-    if (req.originalUrl === '/webhook') {
-      next();
-    } else {
-      bodyParser.json()(req, res, next);
-    }
-  }
-);
+// app.use(
+//   (
+//     req: express.Request,
+//     res: express.Response,
+//     next: express.NextFunction
+//   ): void => {
+//     if (req.originalUrl === '/webhook') {
+//       next();
+//     } else {
+//       bodyParser.json()(req, res, next);
+//     }
+//   }
+// );
 
 // tslint:disable-next-line: interface-name
 interface Order {
