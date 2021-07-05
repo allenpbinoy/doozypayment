@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable prettier/prettier */
 
 import bodyParser from 'body-parser';
 import express from 'express';
@@ -342,7 +347,6 @@ app.post(
     if (eventType === 'payment_intent.succeeded') {
       // Cast the event into a PaymentIntent to make use of the types.
       const pi: Stripe.PaymentIntent = data.object as Stripe.PaymentIntent;
-
       // Funds have been captured
       // Fulfill any orders, e-mail receipts, etc
       // To cancel the payment after capture you will need to issue a Refund (https://stripe.com/docs/api/refunds).
@@ -488,5 +492,5 @@ app.post('/payment-sheet', async (_, res) => {
 });
 
 app.listen(PORT, function () {
-  console.log('Example app listening on port 3000!',PORT);
+  console.log('Example app listening on port',PORT);
 });

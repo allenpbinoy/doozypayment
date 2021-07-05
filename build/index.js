@@ -476,6 +476,7 @@ app.post('/payment-sheet', function (_, res) { return __awaiter(void 0, void 0, 
                         amount: 1099,
                         currency: 'usd',
                         customer: customer.id,
+                        description: "Payment for the order placed in Doozy"
                     })];
             case 3:
                 paymentIntent = _a.sent();
@@ -487,5 +488,6 @@ app.post('/payment-sheet', function (_, res) { return __awaiter(void 0, void 0, 
                 return [2 /*return*/];
         }
     });
-}); });
+}); 
+});
 

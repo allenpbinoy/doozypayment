@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable prettier/prettier */
 import type Stripe from 'stripe';
 
 export const generateResponse = (
