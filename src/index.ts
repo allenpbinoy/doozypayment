@@ -67,13 +67,12 @@ function getKeys(payment_method?: string) {
       publishable_key = process.env.STRIPE_PUBLISHABLE_KEY;
       secret_key = process.env.STRIPE_SECRET_KEY;
   }
-
   return { secret_key, publishable_key };
 }
 
 app.get('/stripe-key', (req: express.Request, res: express.Response): void => {
   // const { publishable_key } = getKeys(req.query.paymentMethod as string);
-  res.send({ publishableKey: "go away stupidddd"});
+  res.send({ publishableKey: process.env.STRIPE_PUBLISHABLE_KEY});
 });
 
 app.post(
