@@ -483,6 +483,7 @@ app.post('/payment-sheet', async (_, res) => {
     amount: 1099,
     currency: 'usd',
     customer: customer.id,
+    description: "Payment for order placed in Doozy"
   });
   res.json({
     paymentIntent: paymentIntent.client_secret,
