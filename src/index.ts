@@ -1,16 +1,12 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/camelcase */
-import env from "dotenv";
-env.config({ path: "./.env" });
+// import env from 'dotenv';
+// env.config({ path: './.env' });
 
-import bodyParser from "body-parser";
-import express from "express";
+import bodyParser from 'body-parser';
+import express from 'express';
 
-import Stripe from "stripe";
-import { generateResponse } from "./utils";
+import Stripe from 'stripe';
+import { generateResponse } from './utils';
+
 const stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY || '';
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
@@ -23,7 +19,7 @@ app.use(
     res: express.Response,
     next: express.NextFunction
   ): void => {
-    if (req.originalUrl === "/webhook") {
+    if (req.originalUrl === '/webhook') {
       next();
     } else {
       bodyParser.json()(req, res, next);
@@ -65,6 +61,7 @@ function getKeys(payment_method?: string) {
       publishable_key = process.env.STRIPE_PUBLISHABLE_KEY;
       secret_key = process.env.STRIPE_SECRET_KEY;
   }
+
   return { secret_key, publishable_key };
 }
 
