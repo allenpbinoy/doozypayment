@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf ./build && tsc",
-    "start:dev": "nodemon",
-    "start": "node build/index.js",
+    "start": "nodemon",
     "postinstall": "npm run build",
     "lint": "eslint . --ext .ts",
     "prettier-format": "run-script-os",
