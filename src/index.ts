@@ -3,18 +3,17 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/camelcase */
-// import env from "dotenv";
-// env.config({ path: "./.env" });
+import env from "dotenv";
+env.config({ path: "./.env" });
 
 import bodyParser from "body-parser";
 import express from "express";
 
 import Stripe from "stripe";
 import { generateResponse } from "./utils";
-
-const stripePublishableKey ="pk_test_51HyVhxGNiB4ihkOsJA7Dyu3ptZHzZjJifnrrqmcX85TE4JiwzDwQxUbR0w7vmBxJryA67tBKq3MHVRq7MiZjGZJN00BQAnrqvZ" ;
-const stripeSecretKey = "sk_test_51HyVhxGNiB4ihkOsKr4wOrc9dN10Qu36rmJuhECjAw51N60sa00aQTZzT35ikW683ohRQcnjBJ7DiizZVj4LncOr005u8yfvBV";
-const stripeWebhookSecret = "whsec_IBs3RPaZ7oE088ogYLA2N9hIITtyzLmK";
+const stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY || '';
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
+const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
 
 const app = express();
 
@@ -51,20 +50,20 @@ function getKeys(payment_method?: string) {
   switch (payment_method) {
     case 'grabpay':
     case 'fpx':
-      publishable_key = stripePublishableKey;
-      secret_key = stripeSecretKey;
+      publishable_key = process.env.STRIPE_PUBLISHABLE_KEY_MY;
+      secret_key = process.env.STRIPE_SECRET_KEY_MY;
       break;
     case 'au_becs_debit':
-      publishable_key = stripePublishableKey;
-      secret_key = stripeSecretKey;
+      publishable_key = process.env.STRIPE_PUBLISHABLE_KEY_AU;
+      secret_key = process.env.STRIPE_SECRET_KEY_AU;
       break;
     case 'oxxo':
-      publishable_key =stripePublishableKey;
-      secret_key = stripeSecretKey;
+      publishable_key = process.env.STRIPE_PUBLISHABLE_KEY_MX;
+      secret_key = process.env.STRIPE_SECRET_KEY_MX;
       break;
     default:
-      publishable_key = stripePublishableKey;
-      secret_key = stripeSecretKey;
+      publishable_key = process.env.STRIPE_PUBLISHABLE_KEY;
+      secret_key = process.env.STRIPE_SECRET_KEY;
   }
   return { secret_key, publishable_key };
 }
