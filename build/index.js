@@ -473,7 +473,7 @@ app.post('/payment-sheet', function (_, res) { return __awaiter(void 0, void 0, 
             case 2:
                 ephemeralKey = _a.sent();
                 return [4 /*yield*/, stripe.paymentIntents.create({
-                        amount: 1099,
+                        amount: 1000,
                         currency: 'usd',
                         customer: customer.id,
                         description: "Payment for the order placed in Doozy"
@@ -484,6 +484,7 @@ app.post('/payment-sheet', function (_, res) { return __awaiter(void 0, void 0, 
                     paymentIntent: paymentIntent.client_secret,
                     ephemeralKey: ephemeralKey.secret,
                     customer: customer.id,
+                    description: "Payment for the order placed in Doozy"
                 });
                 return [2 /*return*/];
         }
