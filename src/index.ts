@@ -508,6 +508,6 @@ app.post('/payment-sheet', async (_, res) => {
   });
 });
 
-app.listen(4242, (): void =>
-  console.log(`Node server listening on port ${4242}!`)
-);
+// app.listen(4242, (): void =>
+//   console.log(`Node server listening on port ${4242}!`)
+// );
