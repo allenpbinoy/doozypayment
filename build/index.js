@@ -479,12 +479,22 @@ app.post('/payment-sheet', function (_, res) { return __awaiter(void 0, void 0, 
                         "currency": 'usd',
                         "customer": customer.id,
                         "description": "Payment for the order placed in Doozy",
-                        "shipping[name]": "Doozy Seller",
-                        "shipping[address][line1]": "510 Townsend St",
-                        "shipping[address][postal_code]": "98140",
-                        "shipping[address][city]": "San Francisco",
-                        "shipping[address][state]":"CA",
-                        "shipping[address][country]": "US",
+                        "shipping":{
+                            "name":"Doozy Seller",
+                            "address": {
+                                "line1":"510 Townsend st",
+                                "postal_code": "98140",
+                                "city":"San Francisco",
+                                "state":"CA",
+                                "country":"US"
+                            }
+                        }
+                        // "shipping[name]": "Doozy Seller",
+                        // "shipping[address][line1]": "510 Townsend St",
+                        // "shipping[address][postal_code]": "98140",
+                        // "shipping[address][city]": "San Francisco",
+                        // "shipping[address][state]":"CA",
+                        // "shipping[address][country]": "US",
                     })];
             case 3:
                 paymentIntent = _a.sent();
