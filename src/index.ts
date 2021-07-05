@@ -8,8 +8,8 @@ import Stripe from 'stripe';
 import bodyParser from 'body-parser';
 import express from 'express';
 import env from 'dotenv';
+if (process.env.NODE_ENV !== 'production') { env.config({ path: './.env' }); }
 
-env.config({ path: './.env' });
 
 import { generateResponse } from './utils';
 
@@ -18,20 +18,20 @@ const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 const app = express();
-
-// app.use(
-//   (
-//     req: express.Request,
-//     res: express.Response,
-//     next: express.NextFunction
-//   ): void => {
-//     if (req.originalUrl === '/webhook') {
-//       next();
-//     } else {
-//       bodyParser.json()(req, res, next);
-//     }
-//   }
-// );
+app.set( 'port', ( process.env.PORT || 5000 ));
+app.use(
+  (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ): void => {
+    if (req.originalUrl === '/webhook') {
+      next();
+    } else {
+      bodyParser.json()(req, res, next);
+    }
+  }
+);
 
 // tslint:disable-next-line: interface-name
 interface Order {
@@ -507,6 +507,6 @@ app.post('/payment-sheet', async (_, res) => {
   });
 });
 
-// app.listen(4242, (): void =>
-//   console.log(`Node server listening on port ${4242}!`)
-// );
+app.listen( app.get( 'port' ), function() {
+  console.log( 'Node server is running on port ' + app.get( 'port' ));
+  });
