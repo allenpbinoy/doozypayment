@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-// eslint-disable-next-line prettier/prettier
 import type Stripe from 'stripe';
 
 export const generateResponse = (
@@ -29,9 +27,10 @@ export const generateResponse = (
     case 'succeeded':
       // Payment is complete, authentication not required
       // To cancel the payment after capture you will need to issue a Refund (https://stripe.com/docs/api/refunds).
-        console.log('💰 Payment received!');
+      console.log('💰 Payment received!');
       return { clientSecret: intent.client_secret, status: intent.status };
   }
+
   return {
     error: 'Failed',
   };

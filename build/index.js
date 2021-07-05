@@ -39,8 +39,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config({ path: './.env' });
 var body_parser_1 = __importDefault(require("body-parser"));
 var express_1 = __importDefault(require("express"));
 var stripe_1 = __importDefault(require("stripe"));
@@ -49,14 +47,7 @@ var stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY || '';
 var stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
 var stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
 var app = express_1.default();
-app.use(function (req, res, next) {
-    if (req.originalUrl === '/webhook') {
-        next();
-    }
-    else {
-        body_parser_1.default.json()(req, res, next);
-    }
-});
+
 var calculateOrderAmount = function (_order) {
     // Replace this constant with a calculation of the order's amount.
     // Calculate the order total on the server to prevent
@@ -497,6 +488,4 @@ app.post('/payment-sheet', function (_, res) { return __awaiter(void 0, void 0, 
         }
     });
 }); });
-app.listen(4242, function () {
-    return console.log("Node server listening on port " + 4242 + "!");
-});
+

@@ -1,36 +1,16 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/camelcase */
 
-import Stripe from 'stripe';
 import bodyParser from 'body-parser';
 import express from 'express';
 
-
+import Stripe from 'stripe';
 import { generateResponse } from './utils';
 
-const stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+const stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY || '';
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
+const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
 
 const app = express();
-app.set( 'port', ( process.env.PORT || 5000 ));
-app.use(
-  (
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
-  ): void => {
-    if (req.originalUrl === '/webhook') {
-      next();
-    } else {
-      bodyParser.json()(req, res, next);
-    }
-  }
-);
-
+const PORT = process.env.PORT || 3000;
 // tslint:disable-next-line: interface-name
 interface Order {
   items: object[];
@@ -65,12 +45,14 @@ function getKeys(payment_method?: string) {
       publishable_key = process.env.STRIPE_PUBLISHABLE_KEY;
       secret_key = process.env.STRIPE_SECRET_KEY;
   }
+
   return { secret_key, publishable_key };
 }
 
 app.get('/stripe-key', (req: express.Request, res: express.Response): void => {
-  // const { publishable_key } = getKeys(req.query.paymentMethod as string);
-  res.send({ publishableKey: process.env.STRIPE_PUBLISHABLE_KEY});
+  const { publishable_key } = getKeys(req.query.paymentMethod as string);
+
+  res.send({ publishableKey: publishable_key });
 });
 
 app.post(
@@ -345,7 +327,7 @@ app.post(
       event = stripe.webhooks.constructEvent(
         req.body,
         req.headers['stripe-signature'] || [],
-        stripeWebhookSecret || ""
+        stripeWebhookSecret
       );
     } catch (err) {
       console.log(`⚠️  Webhook signature verification failed.`);
@@ -505,6 +487,6 @@ app.post('/payment-sheet', async (_, res) => {
   });
 });
 
-app.listen( app.get( 'port' ), function() {
-  console.log( 'Node server is running on port ' + app.get( 'port' ));
-  });
+app.listen(PORT, function () {
+  console.log('Example app listening on port 3000!',PORT);
+});
