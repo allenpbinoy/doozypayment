@@ -1,15 +1,21 @@
-// import env from 'dotenv';
-// env.config({ path: './.env' });
 
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/camelcase */
+import Stripe from 'stripe';
 import bodyParser from 'body-parser';
 import express from 'express';
+import env from 'dotenv';
 
-import Stripe from 'stripe';
+env.config({ path: './.env' });
+
 import { generateResponse } from './utils';
 
-const stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY || '';
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
-const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
+const stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 const app = express();
 
@@ -67,7 +73,6 @@ function getKeys(payment_method?: string) {
 
 app.get('/stripe-key', (req: express.Request, res: express.Response): void => {
   const { publishable_key } = getKeys(req.query.paymentMethod as string);
-
   res.send({ publishableKey: publishable_key });
 });
 
