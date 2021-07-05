@@ -7,8 +7,6 @@
 import Stripe from 'stripe';
 import bodyParser from 'body-parser';
 import express from 'express';
-import env from 'dotenv';
-if (process.env.NODE_ENV !== 'production') { env.config({ path: './.env' }); }
 
 
 import { generateResponse } from './utils';
