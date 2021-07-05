@@ -51,20 +51,20 @@ function getKeys(payment_method?: string) {
   switch (payment_method) {
     case 'grabpay':
     case 'fpx':
-      publishable_key = process.env.STRIPE_PUBLISHABLE_KEY_MY;
-      secret_key = process.env.STRIPE_SECRET_KEY_MY;
+      publishable_key = stripePublishableKey;
+      secret_key = stripeSecretKey;
       break;
     case 'au_becs_debit':
-      publishable_key = process.env.STRIPE_PUBLISHABLE_KEY_AU;
-      secret_key = process.env.STRIPE_SECRET_KEY_AU;
+      publishable_key = stripePublishableKey;
+      secret_key = stripeSecretKey;
       break;
     case 'oxxo':
-      publishable_key = process.env.STRIPE_PUBLISHABLE_KEY_MX;
-      secret_key = process.env.STRIPE_SECRET_KEY_MX;
+      publishable_key =stripePublishableKey;
+      secret_key = stripeSecretKey;
       break;
     default:
-      publishable_key = process.env.STRIPE_PUBLISHABLE_KEY;
-      secret_key = process.env.STRIPE_SECRET_KEY;
+      publishable_key = stripePublishableKey;
+      secret_key = stripeSecretKey;
   }
   return { secret_key, publishable_key };
 }
