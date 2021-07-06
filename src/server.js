@@ -3,6 +3,12 @@ const send = require("send");
 const app = express();
 const path = require("path");
 const stripe = require("stripe")( process.env.STRIPE_SECRET_KEY, {apiVersion: '2020-08-27'})
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const upload = multer();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(
   express.json({
@@ -15,6 +21,15 @@ app.use(
     }
   })
 );
+
+app.post('/api/sayHello', upload.array(), (request, response) => {
+  let a = request.body.a;
+  let b = request.body.b;
+  
+  let c = parseInt(a) + parseInt(b);
+  response.send('Result : '+c);
+  console.log('Result : '+c);
+});
 
 const calculateOrderAmount = items => {
   // Replace this constant with a calculation of the order's amount
