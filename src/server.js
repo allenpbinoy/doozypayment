@@ -57,12 +57,20 @@ app.get("/.well-known/apple-developer-merchantid-domain-association", async (req
 
 app.post("/check", async (req, res) => {
   const {customer_id} = req.body;
-  const ephemeralKey =await stripe.ephemeralKeys.create({ customer: customer_id },{ api_version: "2020-08-27" },);
-  res.send({
+ try{
+  if(customer_id){
+    const ephemeralKey = await stripe.ephemeralKeys.create({ customer: customer_id });
+    res.status(200).send({
     publicKey: process.env.STRIPE_PUBLISHABLE_KEY,
     sk:process.env.STRIPE_SECRET_KEY,
     ephemeral_key: ephemeralKey
-  });
+   });
+  }else{
+  res.status(202).send({"error":"Unable to check","message":`invalid params`});
+  }
+ }catch(e){
+  res.status(201).send({"error":"Unable to check","message":`${e}`});
+ }
 });
 
 app.get("/root", async (req, res) => {
