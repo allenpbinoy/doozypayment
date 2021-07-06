@@ -82,20 +82,28 @@ app.get("/test", async (req, res) => {
 });
 
 app.post("/initiate-pay-sheet", async (req, res) => {
-  const { items, currency, customer_id } = req.body;
-  const ephemeralKey =await stripe.ephemeralKeys.create({ customer: customerId },{ api_version: "2020-08-27" },);   
+  const { amount, customer_id } = req.body;
+try{
+  if( amount && customer_id ){
+  const ephemeralKey = await stripe.ephemeralKeys.create({customer: customer_id},{apiVersion: '2020-08-27'});  
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: calculateOrderAmount(items),
-    currency: currency,
+    amount: amount,
+    currency: "CAD",
     customer: customer_id
   });
-  // Send publishable key and PaymentIntent details to client
-  res.send({
+  res.status(200).send({
     publicKey: process.env.STRIPE_PUBLISHABLE_KEY,
     clientSecret: paymentIntent.client_secret,
+    paymentIntent: paymentIntent,
     id: paymentIntent.id,
     ephemeral_key: ephemeralKey
   });
+  } else {
+  res.status(202).send({"error":"Parameters invalid","message":``});
+  }
+  } catch(e){
+  res.status(201).send({"error":"We were unable to start payment","message":`${e}`});
+  }
 });
 
 // Webhook handler for asynchronous events.
