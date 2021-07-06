@@ -49,9 +49,9 @@ app.get("/root", async (req, res) => {
   });
 });
 
-app.post("/customer/create",async (req,res) => {
+app.get("/customer/create",async (req,res) => {
  try{
-  const {name, uid, description, phone,} = req.body;
+  const {name, uid, description, phone,} = req.params;
   res.send({
     body: req.body,
     query: req.params,
