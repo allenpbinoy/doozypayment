@@ -2,8 +2,6 @@ const express = require("express");
 const send = require("send");
 const app = express();
 
-path.resolve(process.cwd(), 'your filename in root folder')
-// Copy the .env.example in the root into a .env file in this folder
 const stripe = require("stripe")( process.env.STRIPE_SECRET_KEY, {apiVersion: '2020-08-27'})
 
 app.use(
