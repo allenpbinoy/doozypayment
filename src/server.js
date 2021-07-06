@@ -25,19 +25,15 @@ app.use(
 app.post('/api/create/customer', upload.array(), (request, response) => {
   try{
     const {name, uid, description, phone,} = request.body;
-    response.send({
-      body: request.body,
-      query: request.params,
+    const customer =await stripe.customers.create({
+     description: description || "Doozy Customer",
+     metadata: {
+       uid: uid,
+       name: name,
+       phone: phone,
+     },
     });
-    // const customer =await stripe.customers.create({
-    //  description: description || "Doozy Customer",
-    //  metadata: {
-    //    uid: uid,
-    //    name: name,
-    //    phone: phone,
-    //  },
-    // });
-    // res.status(200).send(customer);
+    res.status(200).send(customer);
    } catch(e){
     res.status(201).send({"status": "Unable to finish request","error":`${e}`});
    }
