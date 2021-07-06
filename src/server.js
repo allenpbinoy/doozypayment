@@ -48,14 +48,15 @@ app.get("/root", async (req, res) => {
     
   });
 });
+
 app.post("/customer/create",async (req,res) => {
  try{
   const {name, uid, description, phone,} = req.query;
   res.send({
-    name: name,
-    uid : uid,
-    description: description,
-    phone: phone,
+    name:  req.query.name,
+    uid :  req.query.uid,
+    description:  req.query.description,
+    phone:  req.query.phone,
   });
   // const customer =await stripe.customers.create({
   //  description: description || "Doozy Customer",
