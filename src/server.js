@@ -24,8 +24,9 @@ const calculateOrderAmount = items => {
 };
 
 app.get("/", async (req, res) => {
+  const { items, currency,} = req.body;
   res.send({
-    msg: "hello",
+    msg: `hello ${items}` ,
   });
 });
 
