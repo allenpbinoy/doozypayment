@@ -1,7 +1,7 @@
 const express = require("express");
 const send = require("send");
 const app = express();
-
+const path = require("path");
 const stripe = require("stripe")( process.env.STRIPE_SECRET_KEY, {apiVersion: '2020-08-27'})
 
 app.use(
@@ -44,15 +44,21 @@ app.get("/check", async (req, res) => {
 app.post("/customer/create",async (req,res) => {
  try{
   const {name, uid, description, phone,} = req.body;
-  const customer =await stripe.customers.create({
-   description: description || "Doozy Customer",
-   metadata: {
-     uid: uid,
-     name: name,
-     phone: phone,
-   },
+  res.send({
+    name: name,
+    uid : uid,
+    description: description,
+    phone: phone,
   });
-  res.status(200).send(customer);
+  // const customer =await stripe.customers.create({
+  //  description: description || "Doozy Customer",
+  //  metadata: {
+  //    uid: uid,
+  //    name: name,
+  //    phone: phone,
+  //  },
+  // });
+  // res.status(200).send(customer);
  } catch(e){
   res.status(201).send({"status": "Unable to finish request","error":`${e}`});
  }
