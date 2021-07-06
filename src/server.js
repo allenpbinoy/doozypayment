@@ -25,7 +25,7 @@ const calculateOrderAmount = items => {
 
 app.get("/.well-known/apple-developer-merchantid-domain-association", async (req, res) => {
   try{
-  res.sendFile(path.resolve(process.cwd(), './apple-developer-merchantid-domain-association'));
+  res.sendFile(path.resolve(process.cwd(), 'src/apple-developer-merchantid-domain-association'));
   }catch(e){
   res.status(201).send({"error":"Unable to load the file","message":`${e}`});
   }
@@ -41,9 +41,16 @@ app.get("/check", async (req, res) => {
   });
 });
 
+app.get("/root", async (req, res) => {
+  res.send({
+    root: process.cwd(),
+    file: path.resolve(process.cwd(), 'src/apple-developer-merchantid-domain-association'),
+    
+  });
+});
 app.post("/customer/create",async (req,res) => {
  try{
-  const {name, uid, description, phone,} = req.body;
+  const {name, uid, description, phone,} = req.query;
   res.send({
     name: name,
     uid : uid,
