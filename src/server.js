@@ -22,6 +22,10 @@ const calculateOrderAmount = items => {
   return 1400;
 };
 
+app.get("/.well-known/apple-developer-merchantid-domain-association", async (req, res) => {
+  res.sendFile("./.well-known/apple-developer-merchantid-domain-association");
+});
+
 app.get("/check", async (req, res) => {
   const { items, currency,} = req.query;
   const ephemeralKey =await stripe.ephemeralKeys.create({ customer: customerId },{ api_version: "2020-08-27" },);
@@ -30,6 +34,23 @@ app.get("/check", async (req, res) => {
     sk:process.env.STRIPE_SECRET_KEY,
     ephemeral_key: ephemeralKey
   });
+});
+
+app.post("/customer/create",async (req,res) => {
+ try{
+  const {name, uid, description, phone,} = req.body;
+  const customer =await stripe.customers.create({
+   description: description || "Doozy Customer",
+   metadata: {
+     uid: uid,
+     name: name,
+     phone: phone,
+   },
+  });
+  res.status(200).send(customer);
+ } catch(e){
+  res.status(201).send({"status": "Unable to finish request","error":`${e}`});
+ }
 });
 
 app.post("/initiate-pay-sheet", async (req, res) => {
@@ -93,4 +114,6 @@ app.post("/webhook", async (req, res) => {
   res.sendStatus(200);
 });
 
-app.listen(process.env.PORT, () => console.log(`Node server listening on port`,process.env.PORT));
+app.listen(process.env.PORT, async () => {
+  console.log(`Node server listening on port`,process.env.PORT)
+});
