@@ -101,11 +101,11 @@ try{
     apple_pay: true,
     google_pay: true,
     test_env: true,
-    merchantCountryCode: 'CA',
-    merchantDisplayName: 'Doozy Delivery Co.',
+    merchant_country_code: 'CA',
+    merchant_display_name: 'Doozy Delivery Co.',
     customer_id:customer_id,
     clientSecret: paymentIntent.client_secret,
-    paymentIntentId: paymentIntent.id,
+    payment_intent_id: paymentIntent.id,
     ephemeral_key_secret: ephemeralKey.secret,
   });
 
