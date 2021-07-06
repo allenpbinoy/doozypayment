@@ -22,10 +22,11 @@ app.use(
   })
 );
 
-app.post('/api/create/stripe-customer', upload.array(), (request, response) => {
+app.post('/api/create/stripe-customer', upload.array(), async (request, response) => {
+  const {name, uid, description, phone,} = request.body;
   try{
-    const {name, uid, description, phone,} = request.body;
-    const customer =await stripe.customers.create({
+   if(name&&uid&&description&&phone){
+    const customer = await stripe.customers.create({
      description: description || "Doozy Customer",
      metadata: {
        uid: uid,
@@ -34,6 +35,9 @@ app.post('/api/create/stripe-customer', upload.array(), (request, response) => {
      },
     });
     res.status(200).send(customer);
+   }else{
+    res.status(203).send({"status": "Missing params { name, uid, description, phone}",});
+   }
    } catch(e){
     res.status(201).send({"status": "Unable to finish request","error":`${e}`});
    }
