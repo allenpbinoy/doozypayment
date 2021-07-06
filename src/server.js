@@ -1,9 +1,8 @@
 const express = require("express");
 const app = express();
-
 // Copy the .env.example in the root into a .env file in this folder
 const env = require("dotenv").config({ path: "./.env" });
-const stripe = require("stripe")( env.process.STRIPE_SECRET_KEY, {apiVersion: '2020-08-27'})
+const stripe = require("stripe")( process.env.STRIPE_SECRET_KEY, {apiVersion: '2020-08-27'})
 
 app.use(
   express.json({
@@ -32,7 +31,7 @@ app.get("/", async (req, res) => {
 
 app.post("/initiate-pay-sheet", async (req, res) => {
   const { items, currency, customer_id } = req.body;
-  const ephemeralKey =await stripe.ephemeralKeys.create({ customer: customerId },{ stripe_version: "2020-08-27" },);   
+  const ephemeralKey =await stripe.ephemeralKeys.create({ customer: customerId },{ api_version: "2020-08-27" },);   
   const paymentIntent = await stripe.paymentIntents.create({
     amount: calculateOrderAmount(items),
     currency: currency,
@@ -40,7 +39,7 @@ app.post("/initiate-pay-sheet", async (req, res) => {
   });
   // Send publishable key and PaymentIntent details to client
   res.send({
-    publicKey: env.process.STRIPE_PUBLISHABLE_KEY,
+    publicKey: process.env.STRIPE_PUBLISHABLE_KEY,
     clientSecret: paymentIntent.client_secret,
     id: paymentIntent.id,
     ephemeral_key: ephemeralKey
@@ -50,7 +49,7 @@ app.post("/initiate-pay-sheet", async (req, res) => {
 // Webhook handler for asynchronous events.
 app.post("/webhook", async (req, res) => {
   // Check if webhook signing is configured.
-  if (env.process.STRIPE_WEBHOOK_SECRET) {
+  if (process.env.STRIPE_WEBHOOK_SECRET) {
     // Retrieve the event by verifying the signature using the raw body and secret.
     let event;
     let signature = req.headers["stripe-signature"];
@@ -58,7 +57,7 @@ app.post("/webhook", async (req, res) => {
       event = stripe.webhooks.constructEvent(
         req.rawBody,
         signature,
-        env.process.STRIPE_WEBHOOK_SECRET
+        process.env.STRIPE_WEBHOOK_SECRET
       );
     } catch (err) {
       console.log(`⚠️  Webhook signature verification failed.`);
@@ -91,4 +90,4 @@ app.post("/webhook", async (req, res) => {
   res.sendStatus(200);
 });
 
-app.listen(env.process.PORT, () => console.log(`Node server listening on port`,env.process.PORT));
+app.listen(process.env.PORT, () => console.log(`Node server listening on port`,process.env.PORT));
