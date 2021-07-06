@@ -34,12 +34,12 @@ app.post('/api/create/stripe-customer', upload.array(), async (request, response
        phone: phone,
      },
     });
-    res.status(200).send(customer);
+    response.status(200).send(customer);
    }else{
-    res.status(203).send({"status": "Missing params { name, uid, description, phone}",});
+    response.status(203).send({"status": "Missing params { name, uid, description, phone}",});
    }
    } catch(e){
-    res.status(201).send({"status": "Unable to finish request","error":`${e}`});
+    response.status(201).send({"status": "Unable to finish request","error":`${e}`});
    }
 });
 
