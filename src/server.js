@@ -84,20 +84,31 @@ app.get("/test", async (req, res) => {
 app.post("/initiate-pay-sheet", async (req, res) => {
   const { amount, customer_id } = req.body;
 try{
+
   if( amount && customer_id ){
-  const ephemeralKey = await stripe.ephemeralKeys.create({customer: customer_id},{apiVersion: '2020-08-27'});  
+
+  const ephemeralKey = await stripe.ephemeralKeys.create(
+    {customer: customer_id},
+    {apiVersion: '2020-08-27'}
+    );  
   const paymentIntent = await stripe.paymentIntents.create({
     amount: amount,
     currency: "CAD",
     customer: customer_id
   });
+
   res.status(200).send({
-    publicKey: process.env.STRIPE_PUBLISHABLE_KEY,
+    apple_pay: true,
+    google_pay: true,
+    test_env: true,
+    merchantCountryCode: 'CA',
+    merchantDisplayName: 'Doozy Delivery Co.',
+    customer_id:customer_id,
     clientSecret: paymentIntent.client_secret,
-    paymentIntent: paymentIntent,
-    id: paymentIntent.id,
-    ephemeral_key: ephemeralKey
+    paymentIntentId: paymentIntent.id,
+    ephemeral_key_secret: ephemeralKey.secret,
   });
+
   } else {
   res.status(202).send({"error":"Parameters invalid","message":``});
   }
