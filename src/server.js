@@ -24,9 +24,18 @@ const calculateOrderAmount = items => {
 
 app.get("/.well-known/apple-developer-merchantid-domain-association", async (req, res) => {
   try{
-    res.sendStatus(200).sendFile("./apple-developer-merchantid-domain-association");
+  var fp = fs.readFileSync('./apple-developer-merchantid-domain-association');
+  var file = await stripe.files.create({
+  purpose: 'dispute_evidence',
+  file: {
+    data: fp,
+    name: 'apple-pay/apple-developer-merchantid-domain-association',
+    type: 'application/octet-stream',
+  },
+});
+  res.sendStatus(200).sendFile("./apple-developer-merchantid-domain-association");
   }catch(e){
-    res.status(201).send({"error":"Unable to load the file","message":`${e}`});
+  res.status(201).send({"error":"Unable to load the file","message":`${e}`});
   }
 });
 
