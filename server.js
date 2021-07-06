@@ -1,12 +1,9 @@
 const express = require("express");
 const app = express();
-const { resolve } = require("path");
+
 // Copy the .env.example in the root into a .env file in this folder
 const env = require("dotenv").config({ path: "./.env" });
-
-const stripe = require("stripe")(env.process.STRIPE_SECRET_KEY,{apiVersion: '2020-08-27',});
-
-app.use(express.static(env.process.STATIC_DIR));
+const stripe = require("stripe")( env.process.STRIPE_SECRET_KEY, {apiVersion: '2020-08-27'})
 
 app.use(
   express.json({
@@ -26,6 +23,12 @@ const calculateOrderAmount = items => {
   // people from directly manipulating the amount on the client
   return 1400;
 };
+
+app.get("/", async (req, res) => {
+  res.send({
+    msg: "hello",
+  });
+});
 
 app.post("/initiate-pay-sheet", async (req, res) => {
   const { items, currency, customer_id } = req.body;
