@@ -25,7 +25,7 @@ app.use(
 app.post('/api/create/customer', upload.array(), (request, response) => {
   try{
     const {name, uid, description, phone,} = request.body;
-    res.send({
+    response.send({
       body: request.body,
       query: request.params,
     });
