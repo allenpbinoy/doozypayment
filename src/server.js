@@ -22,10 +22,13 @@ const calculateOrderAmount = items => {
   return 1400;
 };
 
-app.get("/", async (req, res) => {
-  const { items, currency,} = req.body;
+app.get("/check", async (req, res) => {
+  const { items, currency,} = req.query;
+  const ephemeralKey =await stripe.ephemeralKeys.create({ customer: customerId },{ api_version: "2020-08-27" },);
   res.send({
-    msg: `hello ${req.query.name}` ,
+    publicKey: process.env.STRIPE_PUBLISHABLE_KEY,
+    sk:process.env.STRIPE_SECRET_KEY,
+    ephemeral_key: ephemeralKey
   });
 });
 
