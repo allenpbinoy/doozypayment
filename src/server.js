@@ -24,10 +24,10 @@ app.use(
 
 app.post('/api/create/customer', upload.array(), (request, response) => {
   try{
-    const {name, uid, description, phone,} = req.body;
+    const {name, uid, description, phone,} = request.body;
     res.send({
-      body: req.body,
-      query: req.params,
+      body: request.body,
+      query: request.params,
     });
     // const customer =await stripe.customers.create({
     //  description: description || "Doozy Customer",
