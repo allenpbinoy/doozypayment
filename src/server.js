@@ -1,6 +1,8 @@
 const express = require("express");
 const send = require("send");
 const app = express();
+
+path.resolve(process.cwd(), 'your filename in root folder')
 // Copy the .env.example in the root into a .env file in this folder
 const stripe = require("stripe")( process.env.STRIPE_SECRET_KEY, {apiVersion: '2020-08-27'})
 
@@ -25,7 +27,7 @@ const calculateOrderAmount = items => {
 
 app.get("/.well-known/apple-developer-merchantid-domain-association", async (req, res) => {
   try{
-  res.sendFile("./apple-developer-merchantid-domain-association");
+  res.sendFile(path.resolve(process.cwd(), './apple-developer-merchantid-domain-association'));
   }catch(e){
   res.status(201).send({"error":"Unable to load the file","message":`${e}`});
   }
