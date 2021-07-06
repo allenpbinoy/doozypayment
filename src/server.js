@@ -59,7 +59,7 @@ app.post("/check", async (req, res) => {
   const {customer_id} = req.body;
  try{
   if(customer_id){
-    const ephemeralKey = await stripe.ephemeralKeys.create({ customer: customer_id });
+    const ephemeralKey = await stripe.ephemeralKeys.create(customer_id ,{api_version: '2020-08-27'});
     res.status(200).send({
     publicKey: process.env.STRIPE_PUBLISHABLE_KEY,
     sk:process.env.STRIPE_SECRET_KEY,
