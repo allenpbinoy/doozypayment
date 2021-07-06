@@ -2,7 +2,7 @@ const express = require("express");
 const send = require("send");
 const app = express();
 const path = require("path");
-const stripe = require("stripe")( process.env.STRIPE_SECRET_KEY, {stripeVersion: '2020-08-27'})
+const stripe = require("stripe")( process.env.STRIPE_SECRET_KEY, {apiVersion: '2020-08-27'})
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const upload = multer();
@@ -59,7 +59,7 @@ app.post("/check", async (req, res) => {
   const {customer_id} = req.body;
  try{
   if(customer_id){
-    const ephemeralKey = await stripe.ephemeralKeys.create(customer_id ,{stripeVersion: '2020-08-27'});
+    const ephemeralKey = await stripe.ephemeralKeys.create({customer: customer_id},{apiVersion: '2020-08-27'});
     res.status(200).send({
     publicKey: process.env.STRIPE_PUBLISHABLE_KEY,
     sk:process.env.STRIPE_SECRET_KEY,
