@@ -23,7 +23,11 @@ const calculateOrderAmount = items => {
 };
 
 app.get("/.well-known/apple-developer-merchantid-domain-association", async (req, res) => {
-  res.sendFile("./apple-developer-merchantid-domain-association");
+  try{
+    res.sendFile("./apple-developer-merchantid-domain-association");
+  }catch(e){
+    res.send({"Error":"Unable to load the file"});
+  }
 });
 
 app.get("/check", async (req, res) => {
