@@ -22,19 +22,28 @@ app.use(
   })
 );
 
-app.post('/api/sayHello', upload.array(), (request, response) => {
-  let a = request.body.a;
-  let b = request.body.b;
-  
-  let c = parseInt(a) + parseInt(b);
-  response.send('Result : '+c);
-  console.log('Result : '+c);
+app.post('/api/create/customer', upload.array(), (request, response) => {
+  try{
+    const {name, uid, description, phone,} = req.body;
+    res.send({
+      body: req.body,
+      query: req.params,
+    });
+    // const customer =await stripe.customers.create({
+    //  description: description || "Doozy Customer",
+    //  metadata: {
+    //    uid: uid,
+    //    name: name,
+    //    phone: phone,
+    //  },
+    // });
+    // res.status(200).send(customer);
+   } catch(e){
+    res.status(201).send({"status": "Unable to finish request","error":`${e}`});
+   }
 });
 
 const calculateOrderAmount = items => {
-  // Replace this constant with a calculation of the order's amount
-  // Calculate the order total on the server to prevent
-  // people from directly manipulating the amount on the client
   return 1400;
 };
 
@@ -46,9 +55,9 @@ app.get("/.well-known/apple-developer-merchantid-domain-association", async (req
   }
 });
 
-app.get("/check", async (req, res) => {
-  const { items, currency,} = req.query;
-  const ephemeralKey =await stripe.ephemeralKeys.create({ customer: customerId },{ api_version: "2020-08-27" },);
+app.post("/check", async (req, res) => {
+  const {customer_id} = req.body;
+  const ephemeralKey =await stripe.ephemeralKeys.create({ customer: customer_id },{ api_version: "2020-08-27" },);
   res.send({
     publicKey: process.env.STRIPE_PUBLISHABLE_KEY,
     sk:process.env.STRIPE_SECRET_KEY,
@@ -60,29 +69,7 @@ app.get("/root", async (req, res) => {
   res.send({
     root: process.cwd(),
     file: path.resolve(process.cwd(), 'src/apple-developer-merchantid-domain-association'),
-    
   });
-});
-
-app.get("/customer/create",async (req,res) => {
- try{
-  const {name, uid, description, phone,} = req.params;
-  res.send({
-    body: req.body,
-    query: req.params,
-  });
-  // const customer =await stripe.customers.create({
-  //  description: description || "Doozy Customer",
-  //  metadata: {
-  //    uid: uid,
-  //    name: name,
-  //    phone: phone,
-  //  },
-  // });
-  // res.status(200).send(customer);
- } catch(e){
-  res.status(201).send({"status": "Unable to finish request","error":`${e}`});
- }
 });
 
 app.post("/initiate-pay-sheet", async (req, res) => {
