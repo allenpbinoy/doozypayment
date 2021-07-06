@@ -22,7 +22,7 @@ app.use(
   })
 );
 
-app.post('/api/create/customer', upload.array(), (request, response) => {
+app.post('/api/create/stripe-customer', upload.array(), (request, response) => {
   try{
     const {name, uid, description, phone,} = request.body;
     const customer =await stripe.customers.create({
