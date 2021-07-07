@@ -22,81 +22,68 @@ app.use(
   })
 );
 
+
+app.post("/test", async (req, res) => {
+  const {customer_id} = req.body;
+ try{
+   res.status(200).send({
+    publicKey: process.env.STRIPE_PUBLISHABLE_KEY,
+    sk:process.env.STRIPE_SECRET_KEY,
+    root: process.cwd(),
+    file: path.resolve(process.cwd(), 'src/apple-developer-merchantid-domain-association'),
+    port: process.env.PORT,
+   });
+ }catch(e){
+  res.status(201).send({"error":"Unable to check","message":`${e}`});
+ }
+});
+
+
 app.post('/api/create/stripe-customer', upload.array(), async (request, response) => {
-  const {name, uid, description, phone,} = request.body;
+  const {name, uid, phone, email} = request.body;
   try{
-   if(name&&uid&&description&&phone){
+   if(name&& uid && phone){
     const customer = await stripe.customers.create({
-     description: description || "Doozy Customer",
-     metadata: {
-       uid: uid,
-       name: name,
-       phone: phone,
-     },
+    name: name,
+    phone: phone,
+    description: uid,
+    email: email,
     });
     response.status(200).send(customer);
    }else{
-    response.status(203).send({"status": "Missing params { name, uid, description, phone}",});
+    response.status(203).send({"status": "Missing params { name, uid, phone, email}",});
    }
    } catch(e){
     response.status(201).send({"status": "Unable to finish request","error":`${e}`});
    }
 });
 
-const calculateOrderAmount = items => {
-  return 1400;
-};
-
-app.get("/.well-known/apple-developer-merchantid-domain-association", async (req, res) => {
-  try{
-  res.sendFile(path.resolve(process.cwd(), 'src/apple-developer-merchantid-domain-association'));
-  }catch(e){
-  res.status(201).send({"error":"Unable to load the file","message":`${e}`});
-  }
-});
-
-app.post("/check", async (req, res) => {
-  const {customer_id} = req.body;
- try{
-  if(customer_id){
-    const ephemeralKey = await stripe.ephemeralKeys.create({customer: customer_id},{apiVersion: '2020-08-27'});
-    res.status(200).send({
-    publicKey: process.env.STRIPE_PUBLISHABLE_KEY,
-    sk:process.env.STRIPE_SECRET_KEY,
-    ephemeral_key: ephemeralKey
-   });
-  }else{
-  res.status(202).send({"error":"Unable to check","message":`invalid params`});
-  }
- }catch(e){
-  res.status(201).send({"error":"Unable to check","message":`${e}`});
- }
-});
-
-app.get("/test", async (req, res) => {
-  res.send({
-    root: process.cwd(),
-    file: path.resolve(process.cwd(), 'src/apple-developer-merchantid-domain-association'),
-    port: process.env.PORT,
+app.post("/api/create/payment-intent", async (req, res) => {
+  const { amount, customer_id, email, order_id,} = req.body;
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: amount,
+    currency: "CAD",
+    customer: customer_id,
+    receipt_email: email,
+    metadata: {
+      order_id: order_id
+    },
+  });
+  res.status(200).send({
+    clientSecret: paymentIntent.client_secret,
+    payment_intent_id: paymentIntent.id,
   });
 });
 
 app.post("/initiate-pay-sheet", async (req, res) => {
-  const { amount, customer_id } = req.body;
+  const { amount, customer_id, payment_intent_id, client_secret} = req.body;
 try{
-
-  if( amount && customer_id ){
+  if( amount && customer_id && payment_intent_id && client_secret){
 
   const ephemeralKey = await stripe.ephemeralKeys.create(
     {customer: customer_id},
     {apiVersion: '2020-08-27'}
     );  
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: amount,
-    currency: "CAD",
-    customer: customer_id
-  });
-
   res.status(200).send({
     apple_pay: true,
     google_pay: true,
@@ -104,16 +91,15 @@ try{
     merchant_country_code: 'CA',
     merchant_display_name: 'Doozy Delivery Co.',
     customer_id:customer_id,
-    clientSecret: paymentIntent.client_secret,
-    payment_intent_id: paymentIntent.id,
     ephemeral_key_secret: ephemeralKey.secret,
+    clientSecret:client_secret,
+    payment_intent_id:payment_intent_id,
   });
-
   } else {
-  res.status(202).send({"error":"Parameters invalid","message":``});
+  res.status(202).send({"error":"Invalid Parameters passed!","message":`Check params -> amount, customer_id, payment_intent_id, client_secret`});
   }
   } catch(e){
-  res.status(201).send({"error":"We were unable to start payment","message":`${e}`});
+  res.status(201).send({"error":"Oops!, Something went wrong at our end.","message":`${e}`});
   }
 });
 
@@ -145,10 +131,10 @@ app.post("/webhook", async (req, res) => {
 
   if (eventType === "payment_method.attached") {
     // The PaymentMethod is attached
-    console.log("❗ PaymentMethod successfully attached to Customer");
+     console.log("❗ PaymentMethod successfully attached to Customer");
   } else if (eventType === "payment_intent.succeeded") {
     if (data.object.setup_future_usage === null) {
-      console.log("❗ Customer did not want to save the card. ");
+     console.log("❗ Customer did not want to save the card. ");
     }
 
     // Funds have been captured
@@ -163,4 +149,12 @@ app.post("/webhook", async (req, res) => {
 
 app.listen(process.env.PORT, async () => {
   console.log(`Node server listening on port`,process.env.PORT)
+});
+
+app.get("/.well-known/apple-developer-merchantid-domain-association", async (req, res) => {
+  try{
+  res.sendFile(path.resolve(process.cwd(), 'src/apple-developer-merchantid-domain-association'));
+  }catch(e){
+  res.status(201).send({"error":"Unable to load the file","message":`${e}`});
+  }
 });
