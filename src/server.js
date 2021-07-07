@@ -70,7 +70,7 @@ try{
       },
     });
     response.status(200).send({
-      clientSecret: paymentIntent.client_secret,
+      client_secret: paymentIntent.client_secret,
       payment_intent_id: paymentIntent.id,
     });
    }else { 
