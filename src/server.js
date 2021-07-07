@@ -56,8 +56,8 @@ app.post('/api/create/stripe-customer', upload.array(), async (request, response
    }
 });
 
-app.post("/api/create/payment-intent", async (req, res) => {
-  const { amount, customer_id, email, order_id,} = req.body;
+app.post("/api/create/payment-intent", async (request, response) => {
+  const { amount, customer_id, email, order_id,} = request.body;
 try{
   if(amount && customer_id && order_id){
     const paymentIntent = await stripe.paymentIntents.create({
@@ -69,7 +69,7 @@ try{
         order_id: order_id
       },
     });
-    res.status(200).send({
+    response.status(200).send({
       clientSecret: paymentIntent.client_secret,
       payment_intent_id: paymentIntent.id,
     });
@@ -84,7 +84,7 @@ try{
 app.post("/api/initiate-pay-sheet", async (req, res) => {
   const { customer_id, payment_intent_id, client_secret } = req.body;
 try{
-  
+
   if( customer_id && payment_intent_id && client_secret ){
 
   const ephemeralKey = await stripe.ephemeralKeys.create(
