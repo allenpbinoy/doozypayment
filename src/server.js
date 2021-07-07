@@ -23,8 +23,7 @@ app.use(
 );
 
 
-app.post("/test", async (req, res) => {
-  const {customer_id} = req.body;
+app.post("/api/test", async (req, res) => {
  try{
    res.status(200).send({
     publicKey: process.env.STRIPE_PUBLISHABLE_KEY,
@@ -38,11 +37,10 @@ app.post("/test", async (req, res) => {
  }
 });
 
-
 app.post('/api/create/stripe-customer', upload.array(), async (request, response) => {
   const {name, uid, phone, email} = request.body;
   try{
-   if(name&& uid && phone){
+   if(name && uid && phone){
     const customer = await stripe.customers.create({
     name: name,
     phone: phone,
@@ -50,56 +48,72 @@ app.post('/api/create/stripe-customer', upload.array(), async (request, response
     email: email,
     });
     response.status(200).send(customer);
-   }else{
-    response.status(203).send({"status": "Missing params { name, uid, phone, email}",});
+   } else {
+    response.status(203).send({"error": "Missing params { name, uid, phone, email}",});
    }
-   } catch(e){
-    response.status(201).send({"status": "Unable to finish request","error":`${e}`});
+   } catch (e) {
+    response.status(201).send({"error": "Oops! Something went wrong","error":`${e}`});
    }
 });
 
 app.post("/api/create/payment-intent", async (req, res) => {
   const { amount, customer_id, email, order_id,} = req.body;
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: amount,
-    currency: "CAD",
-    customer: customer_id,
-    receipt_email: email,
-    metadata: {
-      order_id: order_id
-    },
-  });
-  res.status(200).send({
-    clientSecret: paymentIntent.client_secret,
-    payment_intent_id: paymentIntent.id,
-  });
+try{
+  if(amount && customer_id && order_id){
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount,
+      currency: "CAD",
+      customer: customer_id,
+      receipt_email: email,
+      metadata: {
+        order_id: order_id
+      },
+    });
+    res.status(200).send({
+      clientSecret: paymentIntent.client_secret,
+      payment_intent_id: paymentIntent.id,
+    });
+   }else { 
+  response.status(203).send({"error": "Missing params {*amount, *customer_id, email, *order_id,}",});
+   }
+  } catch(e) {
+  response.status(201).send({"error": "Oops! Something went wrong","error":`${e}`});
+  }
 });
 
-app.post("/initiate-pay-sheet", async (req, res) => {
-  const { amount, customer_id, payment_intent_id, client_secret} = req.body;
+app.post("/api/initiate-pay-sheet", async (req, res) => {
+  const { customer_id, payment_intent_id, client_secret } = req.body;
 try{
-  if( amount && customer_id && payment_intent_id && client_secret){
+  
+  if( customer_id && payment_intent_id && client_secret ){
 
   const ephemeralKey = await stripe.ephemeralKeys.create(
     {customer: customer_id},
     {apiVersion: '2020-08-27'}
     );  
+
   res.status(200).send({
     apple_pay: true,
     google_pay: true,
     test_env: true,
     merchant_country_code: 'CA',
     merchant_display_name: 'Doozy Delivery Co.',
-    customer_id:customer_id,
+    customer_id: customer_id,
     ephemeral_key_secret: ephemeralKey.secret,
-    clientSecret:client_secret,
-    payment_intent_id:payment_intent_id,
+    client_secret: client_secret,
+    payment_intent_id: payment_intent_id,
   });
+
   } else {
-  res.status(202).send({"error":"Invalid Parameters passed!","message":`Check params -> amount, customer_id, payment_intent_id, client_secret`});
+  res.status(202).send({
+    "error":"Invalid Parameters passed!",
+    "message":`Check params -> amount, customer_id, payment_intent_id, client_secret`
+    });
   }
-  } catch(e){
-  res.status(201).send({"error":"Oops!, Something went wrong at our end.","message":`${e}`});
+  } catch(e) {
+  res.status(201).send({
+    "error":"Oops!, Something went wrong at our end.",
+     "message":`${e}`});
   }
 });
 
